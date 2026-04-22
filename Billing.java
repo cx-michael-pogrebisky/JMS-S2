@@ -14,6 +14,7 @@ class Billing extends JFrame implements ActionListener
         Statement stmt;
 	Statement stmt1;
 	Statement stmtCustom;
+	PreparedStatement pstmt;
         ResultSet rs;
 	ResultSet rs1;
 	ResultSet res;
@@ -302,16 +303,31 @@ class Billing extends JFrame implements ActionListener
 			return;
 		}
 		
-		
-		
-                String query =new String(" INSERT INTO Billing(Customer_ID,Job_ID,Bill_Date,Stone_Numbers,Weight,Net_Weight,Gross_error,Weight_error,Gold_purity,Total_Price,Payment_Mode,Discount,Details) VALUES ('"+sCustomer_Id+"','"+sJob_Id+"','"+sBill_Date+"','"+sStone_Numbers+"','"+sWeight+"','"+sNet_Weight+"','"+sGross_Err+"','"+sWeight_Err+"','"+sGold_Purity+"','"+sTotal_Price+"','"+com+"','"+sDiscount+"','"+sDetails+"')");
-		
+
+
+                // Use PreparedStatement to prevent SQL injection
+                String query = "INSERT INTO Billing(Customer_ID,Job_ID,Bill_Date,Stone_Numbers,Weight,Net_Weight,Gross_error,Weight_error,Gold_purity,Total_Price,Payment_Mode,Discount,Details) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+
 		String query1 = new String("SELECT Amount_Advance FROM Job_Card WHERE Job_ID = "+sJob_Id+"");
-		
+
 		try
 	        {
-        		stmt = con.createStatement();
-			int result = stmt.executeUpdate ( query );
+        		pstmt = con.prepareStatement(query);
+			// Set parameters for the prepared statement
+			pstmt.setString(1, sCustomer_Id);
+			pstmt.setString(2, sJob_Id);
+			pstmt.setString(3, sBill_Date);
+			pstmt.setString(4, sStone_Numbers);
+			pstmt.setString(5, sWeight);
+			pstmt.setString(6, sNet_Weight);
+			pstmt.setString(7, sGross_Err);
+			pstmt.setString(8, sWeight_Err);
+			pstmt.setString(9, sGold_Purity);
+			pstmt.setString(10, sTotal_Price);
+			pstmt.setString(11, com);
+			pstmt.setString(12, sDiscount);
+			pstmt.setString(13, sDetails);
+			int result = pstmt.executeUpdate();
 				
 			stmt1 = con.createStatement();
 			rs1 = stmt1.executeQuery ( query1 );
